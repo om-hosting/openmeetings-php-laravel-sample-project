@@ -1,1 +1,1 @@
-<h1>{{ $text }}</h1>
+<a href="{{ $text }}" target="_blank">{{ $text }}</a>

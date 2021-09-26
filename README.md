@@ -1,3 +1,65 @@
+# OpenMeetings PHP Sample project using openmeetings-php-client and Laravel
+
+## OpenMeetings-PHP-Client example
+
+See: https://packagist.org/packages/om-hosting/openmeetings-php-client
+
+Example usage:
+```php
+        $BASE_URL = "http://localhost:5080/openmeetings";
+    
+        //1. Login to service
+        $config = new Configuration();
+        $config->setHost($BASE_URL . '/services');
+        $userApiInstance = new UserServiceApi(null, $config);
+        $serviceResultLoginWrapper = $userApiInstance->login("soapuser", "!HansHans1");
+        if ($serviceResultLoginWrapper->getServiceResult()->getType() != "SUCCESS") {
+            $text = "Login Failed " . $serviceResultLoginWrapper->getServiceResult()->getMessage();
+            return view('hello_index', ['text' => $text]);
+        }
+        $sid = $serviceResultLoginWrapper->getServiceResult()->getMessage();
+
+        // 2. Generate Hash for entering a conference room
+        $serviceResultHashWrapper = $userApiInstance->getRoomHash($sid,
+            new ExternalUserDTO(
+                array(
+                    "firstname" => "John",
+                    "lastname" => "Doe",
+                    "external_id" => "uniqueId1",
+                    "external_type" => "myCMS",
+                    "login" => "john.doe",
+                    "email" => "john.doe@gmail.com"
+                )
+            ),
+            new RoomOptionsDTO(
+                array(
+                    "room_id" => 2,
+                    "moderator" => true
+                )
+            )
+        );
+
+        // 3. Construct Login URL
+        $hash = $serviceResultHashWrapper->getServiceResult()->getMessage();
+        $url = $this->BASE_URL . "/hash?secure=".$hash;
+```
+
+see also: app/Http/Controllers/HelloController.php
+
+How to create this project from scratch, see: https://fuzzyblog.io/blog/laravel/2021/05/27/a-simple-laravel-hello-world.html
+
+## Startup and test
+
+Startup server locally:
+```bash
+cd into openmeetings-php-laravel-sample-project
+php artisan serve
+```
+
+Browse to: http://localhost:8000/hello
+
+## References
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">

@@ -9,20 +9,24 @@ use Swagger\Client\Model\RoomOptionsDTO;
 
 class HelloController extends Controller
 {
+    private $BASE_URL = "http://localhost:5080/openmeetings";
     //
     public function index()
     {
+
+        //1. Login to service
         $config = new Configuration();
-        $config->setHost('http://localhost:5080/openmeetings/services');
+        $config->setHost($this->BASE_URL . '/services');
         $userApiInstance = new UserServiceApi(null, $config);
-        $serviceResultLogin = $userApiInstance->login("soapuser", "!HansHans1");
-        if ($serviceResultLogin->getType() != "SUCCESS") {
-            $text = "Login Failed " . $serviceResultLogin->getMessage();
+        $serviceResultLoginWrapper = $userApiInstance->login("soapuser", "!HansHans1");
+        if ($serviceResultLoginWrapper->getServiceResult()->getType() != "SUCCESS") {
+            $text = "Login Failed " . $serviceResultLoginWrapper->getServiceResult()->getMessage();
             return view('hello_index', ['text' => $text]);
         }
-        $sid = $serviceResultLogin->getMessage();
+        $sid = $serviceResultLoginWrapper->getServiceResult()->getMessage();
 
-        $serviceResultHash = $userApiInstance->getRoomHash($sid,
+        // 2. Generate Hash for entering a conference room
+        $serviceResultHashWrapper = $userApiInstance->getRoomHash($sid,
             new ExternalUserDTO(
                 array(
                     "firstname" => "John",
@@ -35,18 +39,20 @@ class HelloController extends Controller
             ),
             new RoomOptionsDTO(
                 array(
-                    "room_id" => 1,
+                    "room_id" => 2,
                     "moderator" => true
                 )
             )
         );
 
-        if ($serviceResultHash->getType() != "SUCCESS") {
-            $text = "Create Hash Failed " . $serviceResultHash->getMessage();
+        if ($serviceResultHashWrapper->getServiceResult()->getType() != "SUCCESS") {
+            $text = "Create Hash Failed " . $serviceResultHashWrapper->getServiceResult()->getMessage();
             return view('hello_index', ['text' => $text]);
         }
 
-        $text = "Hash: " . $serviceResultHash->getMessage();
-        return view('hello_index', ['text' => $text]);
+        // 3. Construct Login URL
+        $hash = $serviceResultHashWrapper->getServiceResult()->getMessage();
+        $url = $this->BASE_URL . "/hash?secure=".$hash;
+        return view('hello_index', ['text' => $url]);
     }
 }
