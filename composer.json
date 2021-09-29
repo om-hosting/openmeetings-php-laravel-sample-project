@@ -7,11 +7,11 @@
     "require": {
         "php": "^7.3|^8.0",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^6.2",
+        "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "om-hosting/openmeetings-php-client": "^1.0"
+        "om-hosting/openmeetings-php-client": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
