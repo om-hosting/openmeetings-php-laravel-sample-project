@@ -1,5 +1,6 @@
 # OpenMeetings PHP Sample project using openmeetings-php-client and Laravel
 
+
 ## OpenMeetings-PHP-Client example
 
 See: https://packagist.org/packages/om-hosting/openmeetings-php-client
